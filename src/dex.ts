@@ -3,28 +3,21 @@ declare const window: any;
 export class GoogleMapsLoader {
     private static promise: any;
     public static load() {
+        if (!GoogleMapsLoader.promise) {
 
-    // First time 'load' is called?
-    if (!GoogleMapsLoader.promise) {
+            GoogleMapsLoader.promise = new Promise((resolve) => {
 
-        // Make promise to load
-        GoogleMapsLoader.promise = new Promise((resolve) => {
-
-            // Set callback for when google maps is loaded.
-            window[" __onGoogleMapsLoaded"] = (ev: any) => {
-            console.log("google maps api loaded");
-            resolve(window[" google"][" maps"]);
-            };
-// Add script tag to load google maps, which then triggers the callback, which resolves the promise with windows.google.maps.
-            console.log("loading..");
-            const node = document.createElement("script");
-            node.src = url;
-            node.type = "text/javascript";
-            document.getElementsByTagName("head")[0].appendChild(node);
-        });
+                window.__onGoogleMapsLoaded = () => {
+                    console.log("google maps api loaded");
+                    resolve(window.google.maps);
+                };
+                console.log("loading..");
+                const node = document.createElement("script");
+                node.src = url;
+                node.type = "text/javascript";
+                document.getElementsByTagName("head")[0].appendChild(node);
+            });
+        }
+        return GoogleMapsLoader.promise;
     }
-
-    // Always return promise. When 'load' is called many times, the promise is already resolved.
-    return GoogleMapsLoader.promise;
-  } 
 }

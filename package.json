@@ -1,7 +1,7 @@
 {
   "name": "Glocation",
   "version": "0.1.0",
-  "description": "Glocation helps to get the current location of the user ",
+  "description": "Tracks the current location of the user ",
   "license": "Apache 2",
   "author": "David and Emma",
   "private": true,
