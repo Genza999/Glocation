@@ -5,8 +5,6 @@
   "license": "Apache 2",
   "author": "David and Emma",
   "private": true,
-  "dependencies": {
-  },
   "engines": {
     "node": ">=5"
   },

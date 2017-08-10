@@ -11,7 +11,7 @@ export class GoogleMapsLoader {
                     console.log("google maps api loaded");
                     resolve(window.google.maps);
                 };
-                console.log("loading..");
+                alert("loading..");
                 const node = document.createElement("script");
                 node.src = url;
                 node.type = "text/javascript";

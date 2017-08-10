@@ -4,9 +4,19 @@ import * as WidgetBase from "mxui/widget/_WidgetBase";
 import * as dojoClass from "dojo/dom-class";
 import * as dojoStyle from "dojo/dom-style";
 import * as dom from "dojo/dom";
-import { GoogleMapsLoader } from "./dex";
+import { GoogleMapsLoader } from "./GoogleMapsLoader";
 
-     class Glocation extends WidgetBase {
+interface PositionProp {
+    coords: Coordinates;
+    timestamp: number;
+}
+
+interface Coordinates {
+    latitude: number;
+    longitude: number;
+}
+
+class Glocation extends WidgetBase {
 
          // from modeler
          private longitudeAttribute: string;
@@ -22,23 +32,22 @@ import { GoogleMapsLoader } from "./dex";
          private contextObject: mendix.lib.MxObject;
 
          postCreate() {
-            if (navigator.onLine) {
-            GoogleMapsLoader.load()
-           .then(() => {});
-             } else {
-              mx.ui.error("Check your internet connection");
-             }
             this.geoSuccess = this.geoSuccess.bind(this);
          }
 
          update(object: mendix.lib.MxObject, callback?: () => void) {
              this.contextObject = object;
              this.resetSubscriptions();
-             this.updateRendering();
-             this.getLocation();
+             if (navigator.onLine) {
+                 GoogleMapsLoader.load()
+                     .then(() => {});
+             } else {
+                 mx.ui.error("Please Check your internet connection");
+             }
              if (callback) {
                  callback();
              }
+             this.updateRendering();
          }
 
          uninitialize(): boolean {
@@ -47,6 +56,7 @@ import { GoogleMapsLoader } from "./dex";
 
          private updateRendering() {
              if (this.contextObject) {
+                 this.getLocation();
               } else {
                  dojoStyle.set(this.domNode, "display", "block");
              }
@@ -66,14 +76,14 @@ import { GoogleMapsLoader } from "./dex";
              if (navigator.geolocation) {
                  navigator.geolocation.getCurrentPosition(this.geoSuccess, this.geoError);
              } else {
-                 alert("Geolocation is not supported by this browser.");
+                 mx.ui.error("Geolocation is not supported by this browser.");
              }
          }
          private geoError() {
           mx.ui.error("Geocoder failed.");
        }
 
-         private geoSuccess(position: any) {
+         private geoSuccess(position: PositionProp) {
              const latitude = position.coords.latitude;
              const longit = position.coords.longitude;
              if ((latitude && longit == null) || longit == null || latitude == null) {
@@ -82,7 +92,7 @@ import { GoogleMapsLoader } from "./dex";
              this.codeLatLng(latitude, longit);
          }
 
-        private codeLatLng(lat: any, lng: any) {
+        private codeLatLng(lat: number, lng: number) {
              const geocoder = new google.maps.Geocoder();
              const LatLng = new google.maps.LatLng(lat, lng);
              geocoder.geocode({ location: LatLng }, (results: any, status: any) => {
@@ -92,15 +102,15 @@ import { GoogleMapsLoader } from "./dex";
                          const address = results[0].formatted_address;
                          this.createItem(lat, lng, address);
                      } else {
-                         alert("No results found");
+                         mx.ui.error("No results found");
                      }
                  } else {
-                     alert("Geocoder failed due to: " + status);
+                    mx.ui.error("Geocoder failed due to: " + status);
                  }
              });
          }
 
-         private executeMf(microflow: string, guid: string, callbck?: (obj: mendix.lib.MxObject) => void) {
+         private executeMf(microflow: string, guid: string, callbck?: (mxobj: mendix.lib.MxObject) => void ) {
              if (microflow && guid) {
                  mx.ui.action(microflow, {
                      callback: (objects: mendix.lib.MxObject) => {
@@ -128,24 +138,12 @@ import { GoogleMapsLoader } from "./dex";
                      if (City == null || latitude == null || longitude == null || (City && latitude && longitude) == null) {
                          alert("Error occured on the specifications");
                      }
-                     this.commitItem(object);
                      this.executeMf(this.onchangemf, object.getGuid());
                  },
                  entity: this.locationEntity,
                  error: (e) => {
                      alert("an error occured: " + e);
                  }
-             });
-         }
-         commitItem(obj: mendix.lib.MxObject) {
-             mx.data.commit({
-                 callback: () => {
-                     console.log("Object committed");
-                 },
-                 error: (e) => {
-                     console.log("Error occurred attempting to commit: " + e);
-                 },
-                 mxobj: obj
              });
          }
      }
