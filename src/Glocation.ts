@@ -7,11 +7,11 @@ import * as dom from "dojo/dom";
 import { GoogleMapsLoader } from "./GoogleMapsLoader";
 
 interface PositionProp {
-    coords: Coordinates;
+    coords: Coordinate;
     timestamp: number;
 }
 
-interface Coordinates {
+interface Coordinate {
     latitude: number;
     longitude: number;
 }
@@ -22,12 +22,12 @@ class Glocation extends WidgetBase {
          private longitudeAttribute: string;
          private latitudeAttribute: string;
          private cityName: string;
-         private onchangemf: string;
+         private onChangeMicroflow: string;
 
          // internal
          private latitude: number;
-         private geocoder: any;
          private longitude: number;
+         private city: string;
          private locationEntity: string;
          private contextObject: mendix.lib.MxObject;
 
@@ -37,17 +37,18 @@ class Glocation extends WidgetBase {
 
          update(object: mendix.lib.MxObject, callback?: () => void) {
              this.contextObject = object;
-             this.resetSubscriptions();
              if (navigator.onLine) {
                  GoogleMapsLoader.load()
-                     .then(() => {});
+                     .then(() => { return; });
              } else {
                  mx.ui.error("Please Check your internet connection");
              }
+             this.resetSubscriptions();
              if (callback) {
                  callback();
              }
              this.updateRendering();
+
          }
 
          uninitialize(): boolean {
@@ -66,8 +67,10 @@ class Glocation extends WidgetBase {
              this.unsubscribeAll();
              if (this.contextObject) {
                  this.subscribe({
-                     callback: () => this.updateRendering(),
-                     guid: this.contextObject.getGuid()
+                     callback: (() => {
+                     this.updateRendering();
+                  }),
+                guid: this.contextObject.getGuid()
                  });
              }
          }
@@ -89,10 +92,10 @@ class Glocation extends WidgetBase {
              if ((latitude && longit == null) || longit == null || latitude == null) {
                  alert("Error occured on the coordinates");
              }
-             this.codeLatLng(latitude, longit);
+             this.geoLocate(latitude, longit);
          }
 
-        private codeLatLng(lat: number, lng: number) {
+        private geoLocate(lat: number, lng: number) {
              const geocoder = new google.maps.Geocoder();
              const LatLng = new google.maps.LatLng(lat, lng);
              geocoder.geocode({ location: LatLng }, (results: any, status: any) => {
@@ -100,7 +103,7 @@ class Glocation extends WidgetBase {
                      console.log(results);
                      if (results[1]) {
                          const address = results[0].formatted_address;
-                         this.createItem(lat, lng, address);
+                         this.createData(lat, lng, address);
                      } else {
                          mx.ui.error("No results found");
                      }
@@ -110,7 +113,7 @@ class Glocation extends WidgetBase {
              });
          }
 
-         private executeMf(microflow: string, guid: string, callbck?: (mxobj: mendix.lib.MxObject) => void ) {
+         private executeMicroflow(microflow: string, guid: string, callbck?: (mxobj: mendix.lib.MxObject) => void ) {
              if (microflow && guid) {
                  mx.ui.action(microflow, {
                      callback: (objects: mendix.lib.MxObject) => {
@@ -129,24 +132,16 @@ class Glocation extends WidgetBase {
              }
          }
 
-         createItem(latitude: any, longitude: any, City: string) {
-             mx.data.create({
-                 callback: object => {
-                     object.set(this.cityName, City);
-                     object.set(this.latitudeAttribute, latitude);
-                     object.set(this.longitudeAttribute, longitude);
-                     if (City == null || latitude == null || longitude == null || (City && latitude && longitude) == null) {
+         createData(latitude: any, longitude: any, cityN: string ) {
+                     this.contextObject.set(this.cityName, cityN);
+                     this.contextObject.set(this.latitudeAttribute, latitude);
+                     this.contextObject.set(this.longitudeAttribute, longitude);
+                     if (cityN == null || latitude == null || longitude == null || (cityN && latitude && longitude) == null) {
                          alert("Error occured on the specifications");
                      }
-                     this.executeMf(this.onchangemf, object.getGuid());
-                 },
-                 entity: this.locationEntity,
-                 error: (e) => {
-                     alert("an error occured: " + e);
+                     this.executeMicroflow(this.onChangeMicroflow, this.contextObject.getGuid());
                  }
-             });
          }
-     }
 
 // tslint:disable-next-line:only-arrow-functions
 dojoDeclare("widget.Glocation", [ WidgetBase ], function(Source: any) {

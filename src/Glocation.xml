@@ -4,18 +4,13 @@
     <description>Gets the current location of the user</description>
 
     <properties>
-        <property key="locationEntity" type="entity" required="true">
-            <caption>Location entity</caption>
-            <category>Data source</category>
-            <description>Location</description>
-        </property>
-        <property key="onchangemf" type="microflow" required="true">
+        <property key="onChangeMicroflow" type="microflow">
             <caption> Display microflow</caption>
             <category>Data source</category>
             <description>Sends geo-information obtained to display</description>
             <returnType type="Boolean"/>
         </property>
-        <property key="latitudeAttribute" type="attribute" required="true" entityProperty="locationEntity">
+        <property key="latitudeAttribute" type="attribute" >
             <caption>Latitude</caption>
             <category>Data source</category>
             <description>The latitude specified in the location entity</description>
@@ -23,7 +18,7 @@
                 <attributeType name="String" />
             </attributeTypes>
         </property>
-        <property key="longitudeAttribute" type="attribute" required="true" entityProperty="locationEntity">
+        <property key="longitudeAttribute" type="attribute" >
             <caption>Longitude</caption>
             <category>Data source</category>
             <description>The longitude specified in the location entity</description>
@@ -31,7 +26,7 @@
                 <attributeType name="String"/>
             </attributeTypes>
         </property>
-        <property key="cityName" type="attribute" required="true" entityProperty="locationEntity">
+        <property key="cityName" type="attribute" >
             <caption>Address</caption>
             <category>Data source</category>
             <description>The address that is in the location entity</description>

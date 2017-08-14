@@ -1,5 +1,6 @@
 {
-  "name": "Glocation",
+  "name": "glocation",
+  "widgetName": "Glocation",
   "version": "0.1.0",
   "description": "Tracks the current location of the user ",
   "license": "Apache 2",
