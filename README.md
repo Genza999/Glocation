@@ -11,6 +11,9 @@
 ## Dependencies
 Mendix 6.10.7 and higher versions of mendix
 
+## Demo project
+<a href= "https://geolocation101.mxapps.io"> https://geolocation101.mxapps.io </a>
+
 ## Typical usage scenario
 - Run the widget and you will have to choose what you prefer the widget to display.<br />
 You either choose the option for the  widget to show you your current geo-coordinates.<br />
@@ -26,5 +29,10 @@ No known limitations at the time of development.
 
 ## Development
  Prerequisite: install git, node package manager, webpack CLI, grunt CLI.<br />
+ You can do this by doing
+ <pre><code>npm install</code></pre>
  To contribute, fork and clone from the github remote repository<br />
- git clone https://github.com/Genza999/Glocation.git
+ git clone 
+ <pre><code>https://github.com/Genza999/Glocation.git
+</code></pre>
+
