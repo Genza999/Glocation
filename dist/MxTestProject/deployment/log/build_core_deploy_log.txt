@@ -1,0 +1,10 @@
+Buildfile: C:\Users\David\Desktop\Geolocation\Glocation\dist\MxTestProject\deployment\build_core.xml
+
+deploy:
+    [unzip] Expanding: C:\Program Files\Mendix\6.10.7\modeler\deployment.mxz into C:\Users\David\Desktop\Geolocation\Glocation\dist\MxTestProject\deployment
+
+BUILD SUCCESSFUL
+Total time: 5 seconds
+
+
+

@@ -8,7 +8,6 @@ import { GoogleMapsLoader } from "./GoogleMapsLoader";
 
 interface PositionProp {
     coords: Coordinate;
-    timestamp: number;
 }
 
 interface Coordinate {
@@ -18,24 +17,22 @@ interface Coordinate {
 
 class Glocation extends WidgetBase {
 
-         // from modeler
-         private longitudeAttribute: string;
-         private latitudeAttribute: string;
-         private cityName: string;
-         private onChangeMicroflow: string;
+          longitudeAttribute: string;
+          latitudeAttribute: string;
+          cityName: string;
+          onChangeMicroflow: string;
 
-         // internal
          private latitude: number;
          private longitude: number;
          private city: string;
          private locationEntity: string;
          private contextObject: mendix.lib.MxObject;
 
-         postCreate() {
+        postCreate() {
             this.geoSuccess = this.geoSuccess.bind(this);
          }
 
-         update(object: mendix.lib.MxObject, callback?: () => void) {
+        update(object: mendix.lib.MxObject, callback?: () => void) {
              this.contextObject = object;
              if (navigator.onLine) {
                  GoogleMapsLoader.load()
@@ -51,11 +48,11 @@ class Glocation extends WidgetBase {
 
          }
 
-         uninitialize(): boolean {
+        uninitialize(): boolean {
              return true;
          }
 
-         private updateRendering() {
+        private updateRendering() {
              if (this.contextObject) {
                  this.getLocation();
               } else {
@@ -63,7 +60,7 @@ class Glocation extends WidgetBase {
              }
          }
 
-         private resetSubscriptions() {
+        private resetSubscriptions() {
              this.unsubscribeAll();
              if (this.contextObject) {
                  this.subscribe({
@@ -75,18 +72,18 @@ class Glocation extends WidgetBase {
              }
          }
 
-         private getLocation() {
+        private getLocation() {
              if (navigator.geolocation) {
                  navigator.geolocation.getCurrentPosition(this.geoSuccess, this.geoError);
              } else {
                  mx.ui.error("Geolocation is not supported by this browser.");
              }
          }
-         private geoError() {
+        private geoError() {
           mx.ui.error("Geocoder failed.");
        }
 
-         private geoSuccess(position: PositionProp) {
+        private geoSuccess(position: PositionProp) {
              const latitude = position.coords.latitude;
              const longit = position.coords.longitude;
              if ((latitude && longit == null) || longit == null || latitude == null) {
@@ -113,7 +110,7 @@ class Glocation extends WidgetBase {
              });
          }
 
-         private executeMicroflow(microflow: string, guid: string, callbck?: (mxobj: mendix.lib.MxObject) => void ) {
+        private executeMicroflow(microflow: string, guid: string, callbck?: (mxobj: mendix.lib.MxObject) => void ) {
              if (microflow && guid) {
                  mx.ui.action(microflow, {
                      callback: (objects: mendix.lib.MxObject) => {
@@ -132,7 +129,7 @@ class Glocation extends WidgetBase {
              }
          }
 
-         createData(latitude: any, longitude: any, cityN: string ) {
+        createData(latitude: any, longitude: any, cityN: string ) {
                      this.contextObject.set(this.cityName, cityN);
                      this.contextObject.set(this.latitudeAttribute, latitude);
                      this.contextObject.set(this.longitudeAttribute, longitude);

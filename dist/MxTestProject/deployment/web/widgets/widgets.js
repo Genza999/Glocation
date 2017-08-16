@@ -1,0 +1,1 @@
+﻿define(["widget/Glocation", "PullToRefresh/widget/PullToRefresh"], {});
